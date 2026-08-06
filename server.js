@@ -11,7 +11,7 @@ const { runCognitivePipeline } = require('./nlp_ner/cognitiveArchitecture');
 const { getOpenRouterCompletion } = require('./services/openrouter');
 
 const app = express();
-let PORT = parseInt(process.env.PORT || '3000', 10);
+let PORT = parseInt(process.env.PORT || '2134', 10);
 
 app.use(cors());
 app.use(express.json());
