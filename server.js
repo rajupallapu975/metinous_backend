@@ -5,7 +5,6 @@ const WebSocket = require('ws');
 const cors = require('cors');
 const { exec } = require('child_process');
 const os = require('os');
-const path = require('path');
 const chatRouter = require('./routes/chat');
 const errorHandler = require('./middleware/errorHandler');
 const { runCognitivePipeline } = require('./nlp_ner/cognitiveArchitecture');
@@ -17,21 +16,8 @@ let PORT = parseInt(process.env.PORT || '2134', 10);
 app.use(cors());
 app.use(express.json());
 
-// Serve static Flutter Web frontend assets
-app.use(express.static(path.join(__dirname, 'public')));
-
 // Mount API routes
 app.use('/api', chatRouter);
-
-// Fallback to index.html for SPA routing
-app.get('*', (req, res, next) => {
-  if (req.path.startsWith('/api')) return next();
-  const indexPath = path.join(__dirname, 'public', 'index.html');
-  if (require('fs').existsSync(indexPath)) {
-    return res.sendFile(indexPath);
-  }
-  next();
-});
 
 // Global Error Handler
 app.use(errorHandler);
