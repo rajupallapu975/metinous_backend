@@ -17,7 +17,13 @@ let PORT = parseInt(process.env.PORT || '2134', 10);
 app.use(cors());
 app.use(express.json());
 
-// Serve static frontend files
+// Serve static frontend files for Flutter App 2 (Brain Architecture Interface) at /architecture
+app.use('/architecture', express.static(path.join(__dirname, 'public/architecture')));
+app.get('/architecture/*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public/architecture/index.html'));
+});
+
+// Serve static frontend files for Flutter App 1 (Metinous AI Chat) at /
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Mount API routes
