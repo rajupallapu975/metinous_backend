@@ -23,6 +23,12 @@ const domainConfig = {
     model: process.env.MODEL_UTILITY || 'openai/gpt-4o-mini',
     systemPrompt: 'You are a fast, concise AI Assistant.',
   },
+  CUSTOM: {
+    domainName: 'Custom Translation & Language Expert',
+    badge: '🔮 Custom Expert',
+    model: process.env.MODEL_CUSTOM || 'google/gemini-2.5-flash',
+    systemPrompt: 'You are a custom linguistics and translation specialist. Translate and explain foreign terms concisely.',
+  },
 };
 
 const orchestrateModel = (domainKey) => {

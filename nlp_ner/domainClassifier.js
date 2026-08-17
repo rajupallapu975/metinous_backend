@@ -6,6 +6,7 @@ const classifyDomain = (text = '', entities = {}) => {
     CREATIVE: 0,
     RESEARCH: 0,
     UTILITY: 0,
+    CUSTOM: 0,
   };
 
   // 1. Check Coding & Logic Domain
@@ -32,6 +33,12 @@ const classifyDomain = (text = '', entities = {}) => {
   const utilityKeywords = ['hi', 'hello', 'hey', 'what is', 'who is', 'quick', 'define', 'meaning', 'help', 'thanks'];
   utilityKeywords.forEach((kw) => {
     if (lower.includes(kw)) scores.UTILITY += 2;
+  });
+
+  // 5. Check Custom Expert Domain
+  const customKeywords = ['gemini', 'flash', 'custom', 'translate', 'language', 'french', 'spanish', 'german', 'convert'];
+  customKeywords.forEach((kw) => {
+    if (lower.includes(kw)) scores.CUSTOM += 4;
   });
 
   // Find domain with max score

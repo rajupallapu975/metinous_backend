@@ -38,13 +38,14 @@ const runCognitivePipeline = async ({ promptText, history = [], broadcastFn, get
 
   // 1. Process Prompt via NLP/NER Engine
   const nlpResult = processPromptDirect(promptText);
-  const selectedDomain = nlpResult.domainKey; // CODE, CREATIVE, RESEARCH, UTILITY
+  const selectedDomain = nlpResult.domainKey; // CODE, CREATIVE, RESEARCH, UTILITY, CUSTOM
 
   const llmNodes = [
     { id: 1, name: 'LLM 1', label: 'Code Expert', model: 'meta-llama/llama-3.3-70b-instruct', domain: 'CODE' },
     { id: 2, name: 'LLM 2', label: 'Creative', model: 'openai/gpt-4o-mini', domain: 'CREATIVE' },
     { id: 3, name: 'LLM 3', label: 'Research', model: 'google/gemma-2-27b-it', domain: 'RESEARCH' },
     { id: 4, name: 'LLM 4', label: 'Utility', model: 'openai/gpt-4o-mini', domain: 'UTILITY' },
+    { id: 5, name: 'LLM n', label: 'Custom Expert', model: 'google/gemini-2.5-flash', domain: 'CUSTOM' },
   ];
 
   const activeLLM = llmNodes.find(n => n.domain === selectedDomain) || llmNodes[3];
@@ -118,7 +119,7 @@ const runCognitivePipeline = async ({ promptText, history = [], broadcastFn, get
   const yellow = '\x1b[33m';
   const green = '\x1b[32m';
   const magenta = '\x1b[35m';
-  const dim = '\x1b[90m';
+  const dim = '\x1b[2m';
   const bgBlue = '\x1b[44m\x1b[37m';
 
   const asciiDiagram = `
@@ -147,12 +148,12 @@ ${cyan}=========================================================================
                     │   ${dim}Domain: ${nlpResult.badge}${reset}    │
                     └──────────────┬──────────────┘
                                    │
-       ┌──────────────┬────────────┼────────────┬──────────────┐
-       ▼              ▼            ▼            ▼              ▼
-    ${selectedDomain === 'CODE' ? `${bgBlue}★ LLM 1 (CODE)${reset}` : `${dim}LLM 1 (CODE)${reset}`}  ${selectedDomain === 'CREATIVE' ? `${bgBlue}★ LLM 2 (CREATIVE)${reset}` : `${dim}LLM 2 (CREATIVE)${reset}`}  ${selectedDomain === 'RESEARCH' ? `${bgBlue}★ LLM 3 (RESEARCH)${reset}` : `${dim}LLM 3 (RESEARCH)${reset}`}  ${selectedDomain === 'UTILITY' ? `${bgBlue}★ LLM 4 (UTILITY)${reset}` : `${dim}LLM 4 (UTILITY)${reset}`}  ${dim}LLM n (...)${reset}
-  ${dim}Llama-3.3-70B${reset}   ${dim}GPT-4o-mini${reset}     ${dim}Gemma-2-27B${reset}     ${dim}GPT-4o-mini${reset}     ${dim}(Custom)${reset}
-       │              │            │            │              │
-       └──────────────┴────────────┼────────────┴──────────────┘
+        ┌──────────────┬────────────┼────────────┬──────────────┐
+        ▼              ▼            ▼            ▼              ▼
+     ${selectedDomain === 'CODE' ? `${bgBlue}★ LLM 1 (CODE)${reset}` : `${dim}LLM 1 (CODE)${reset}`}  ${selectedDomain === 'CREATIVE' ? `${bgBlue}★ LLM 2 (CREATIVE)${reset}` : `${dim}LLM 2 (CREATIVE)${reset}`}  ${selectedDomain === 'RESEARCH' ? `${bgBlue}★ LLM 3 (RESEARCH)${reset}` : `${dim}LLM 3 (RESEARCH)${reset}`}  ${selectedDomain === 'UTILITY' ? `${bgBlue}★ LLM 4 (UTILITY)${reset}` : `${dim}LLM 4 (UTILITY)${reset}`}  ${selectedDomain === 'CUSTOM' ? `${bgBlue}★ LLM n (CUSTOM)${reset}` : `${dim}LLM n (CUSTOM)${reset}`}
+   ${dim}Llama-3.3-70B${reset}   ${dim}GPT-4o-mini${reset}     ${dim}Gemma-2-27B${reset}     ${dim}GPT-4o-mini${reset}     ${dim}Gemini-2.5-Flash${reset}
+        │              │            │            │              │
+        └──────────────┴────────────┼────────────┴──────────────┘
                                    ▼
                     ┌─────────────────────────────┐
                     │   ${bold}COLLECTIVE INTELLIGENCE${reset}   │
@@ -180,25 +181,27 @@ ${cyan}=========================================================================
 
   // Print full ASCII flowchart to stdout (streamed live to terminal feed)
   console.log(asciiDiagram);
+  const elapsedStr = () => ` \x1b[90m[+${Date.now() - startTime}ms]\x1b[0m`;
 
   // Print Step-by-step progress lines
-  console.log(`  ${green}▶ Step 1/11 [USER QUERY]${reset} Received: "${yellow}${promptText}${reset}"`);
+  console.log(`  ${green}▶ Step 1/11 [USER QUERY]${reset} Received: "${yellow}${promptText}${reset}"${elapsedStr()}`);
   broadcastStep(0, 'THINKING');
   await sleep(150);
 
-  console.log(`  ${magenta}▶ Step 2/11 [COGNITIVE BRAIN]${reset} Analyzing intent & decomposition...`);
+  console.log(`  ${magenta}▶ Step 2/11 [COGNITIVE BRAIN]${reset} Analyzing intent & decomposition...${elapsedStr()}`);
   broadcastStep(1, 'THINKING');
   await sleep(200);
 
-  console.log(`  ${cyan}▶ Step 3/11 [COGNITIVE MEMORY]${reset} Accessing context store (${history.length} items)...`);
+  console.log(`  ${cyan}▶ Step 3/11 [COGNITIVE MEMORY]${reset} Accessing context store (${history.length} items)...${elapsedStr()}`);
   broadcastStep(2, 'THINKING');
   await sleep(200);
 
-  console.log(`  ${yellow}▶ Step 4/11 [ROUTER]${reset} Target Sub-domain ➔ ${nlpResult.badge} (${nlpResult.selectedModel})`);
+  console.log(`  ${yellow}▶ Step 4/11 [ROUTER]${reset} Target Sub-domain ➔ ${nlpResult.badge} (${nlpResult.selectedModel})${elapsedStr()}`);
   broadcastStep(3, 'THINKING');
   await sleep(200);
 
-  console.log(`  ${bgBlue}★ Step 5/11 [${activeLLM.name}]${reset} Querying model ${activeLLM.model}...`);
+  const llmStartTime = Date.now();
+  console.log(`  ${bgBlue}★ Step 5/11 [${activeLLM.name}]${reset} Querying model ${activeLLM.model}...${elapsedStr()}`);
   broadcastStep(4, 'THINKING');
 
   let llmReply = '';
@@ -210,28 +213,30 @@ ${cyan}=========================================================================
       llmReply = `Error: ${err.message}`;
     }
   }
+  const llmDuration = Date.now() - llmStartTime;
+  console.log(`  ⏳ ${yellow}Spent ${llmDuration}ms waiting/querying at the LLM Routing Suite stage.${reset}${elapsedStr()}`);
 
-  console.log(`  ${cyan}▶ Step 6/11 [COLLECTIVE INTELLIGENCE]${reset} Synthesizing model output...`);
+  console.log(`  ${cyan}▶ Step 6/11 [COLLECTIVE INTELLIGENCE]${reset} Synthesizing model output...${elapsedStr()}`);
   broadcastStep(5, 'THINKING');
   await sleep(150);
 
-  console.log(`  ${green}▶ Step 7/11 [VERIFICATION AGENT]${reset} Auditing safety & schema rules...`);
+  console.log(`  ${green}▶ Step 7/11 [VERIFICATION AGENT]${reset} Auditing safety & schema rules...${elapsedStr()}`);
   broadcastStep(6, 'THINKING');
   await sleep(150);
 
-  console.log(`  ${green}▶ Step 8/11 [FINAL RESPONSE]${reset} Response synthesis complete.`);
+  console.log(`  ${green}▶ Step 8/11 [FINAL RESPONSE]${reset} Response synthesis complete.${elapsedStr()}`);
   broadcastStep(7, 'THINKING');
   await sleep(100);
 
-  console.log(`  ${yellow}▶ Step 9/11 [USER DELIVERY]${reset} Transmitting to client.`);
+  console.log(`  ${yellow}▶ Step 9/11 [USER DELIVERY]${reset} Transmitting to client.${elapsedStr()}`);
   broadcastStep(8, 'THINKING');
   await sleep(100);
 
-  console.log(`  ${magenta}▶ Step 10/11 [EXPERIENCE LEARNING]${reset} Computing feedback metrics...`);
+  console.log(`  ${magenta}▶ Step 10/11 [EXPERIENCE LEARNING]${reset} Computing feedback metrics...${elapsedStr()}`);
   broadcastStep(9, 'THINKING');
   await sleep(100);
 
-  console.log(`  ${cyan}▶ Step 11/11 [UPDATE COGNITIVE MEMORY]${reset} Persisted execution graph.`);
+  console.log(`  ${cyan}▶ Step 11/11 [UPDATE COGNITIVE MEMORY]${reset} Persisted execution graph.${elapsedStr()}`);
   console.log(`${cyan}================================================================================${reset}\n`);
 
   const durationMs = Date.now() - startTime;
