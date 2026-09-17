@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  metinous-ai:
+    build: .
+    container_name: metinous-ai
+    restart: always
+    ports:
+      - "2134:2134"
+    environment:
+      - NODE_ENV=production
+      - PORT=2134
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+      - SEARXNG_URL=${SEARXNG_URL:-}
+      - DATABASE_URL=${DATABASE_URL:-}
+      - CORS_ORIGIN=*
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:2134/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3

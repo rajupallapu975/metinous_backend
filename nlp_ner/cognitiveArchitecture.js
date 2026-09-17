@@ -95,6 +95,12 @@ const runCognitivePipeline = async ({ promptText, history = [], broadcastFn, get
 
   // Fast direct execution for low-level prompts
   if (isLowLevelPrompt) {
+    broadcastStep(0, 'THINKING');
+    await sleep(100);
+    broadcastStep(3, 'THINKING');
+    await sleep(100);
+    broadcastStep(4, 'THINKING');
+
     let reply = '';
     if (typeof getCompletionFn === 'function') {
       try {
@@ -104,6 +110,14 @@ const runCognitivePipeline = async ({ promptText, history = [], broadcastFn, get
         reply = `Error: ${err.message}`;
       }
     }
+
+    broadcastStep(7, 'THINKING');
+    await sleep(80);
+    broadcastStep(9, 'THINKING');
+    await sleep(80);
+    broadcastStep(10, 'THINKING');
+    await sleep(80);
+
     const duration = Date.now() - startTime;
     return {
       nlpResult,
@@ -186,19 +200,19 @@ ${cyan}=========================================================================
   // Print Step-by-step progress lines
   console.log(`  ${green}▶ Step 1/11 [USER QUERY]${reset} Received: "${yellow}${promptText}${reset}"${elapsedStr()}`);
   broadcastStep(0, 'THINKING');
-  await sleep(150);
+  await sleep(100);
 
   console.log(`  ${magenta}▶ Step 2/11 [COGNITIVE BRAIN]${reset} Analyzing intent & decomposition...${elapsedStr()}`);
   broadcastStep(1, 'THINKING');
-  await sleep(200);
+  await sleep(120);
 
   console.log(`  ${cyan}▶ Step 3/11 [COGNITIVE MEMORY]${reset} Accessing context store (${history.length} items)...${elapsedStr()}`);
   broadcastStep(2, 'THINKING');
-  await sleep(200);
+  await sleep(120);
 
   console.log(`  ${yellow}▶ Step 4/11 [ROUTER]${reset} Target Sub-domain ➔ ${nlpResult.badge} (${nlpResult.selectedModel})${elapsedStr()}`);
   broadcastStep(3, 'THINKING');
-  await sleep(200);
+  await sleep(120);
 
   const llmStartTime = Date.now();
   console.log(`  ${bgBlue}★ Step 5/11 [${activeLLM.name}]${reset} Querying model ${activeLLM.model}...${elapsedStr()}`);
@@ -218,23 +232,23 @@ ${cyan}=========================================================================
 
   console.log(`  ${cyan}▶ Step 6/11 [COLLECTIVE INTELLIGENCE]${reset} Synthesizing model output...${elapsedStr()}`);
   broadcastStep(5, 'THINKING');
-  await sleep(150);
+  await sleep(80);
 
   console.log(`  ${green}▶ Step 7/11 [VERIFICATION AGENT]${reset} Auditing safety & schema rules...${elapsedStr()}`);
   broadcastStep(6, 'THINKING');
-  await sleep(150);
+  await sleep(80);
 
   console.log(`  ${green}▶ Step 8/11 [FINAL RESPONSE]${reset} Response synthesis complete.${elapsedStr()}`);
   broadcastStep(7, 'THINKING');
-  await sleep(100);
+  await sleep(80);
 
   console.log(`  ${yellow}▶ Step 9/11 [USER DELIVERY]${reset} Transmitting to client.${elapsedStr()}`);
   broadcastStep(8, 'THINKING');
-  await sleep(100);
+  await sleep(80);
 
   console.log(`  ${magenta}▶ Step 10/11 [EXPERIENCE LEARNING]${reset} Computing feedback metrics...${elapsedStr()}`);
   broadcastStep(9, 'THINKING');
-  await sleep(100);
+  await sleep(80);
 
   console.log(`  ${cyan}▶ Step 11/11 [UPDATE COGNITIVE MEMORY]${reset} Persisted execution graph.${elapsedStr()}`);
   console.log(`${cyan}================================================================================${reset}\n`);
@@ -246,5 +260,6 @@ ${cyan}=========================================================================
 };
 
 module.exports = {
-  runCognitivePipeline
+  runCognitivePipeline,
+  processPromptDirect,
 };

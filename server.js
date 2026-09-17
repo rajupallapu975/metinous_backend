@@ -10,6 +10,7 @@ const chatRouter = require('./routes/chat');
 const errorHandler = require('./middleware/errorHandler');
 const { runCognitivePipeline } = require('./nlp_ner/cognitiveArchitecture');
 const { getOpenRouterCompletion } = require('./services/openrouter');
+const { db } = require('./db');
 
 const app = express();
 let PORT = parseInt(process.env.PORT || '2134', 10);
@@ -247,11 +248,15 @@ wss.on('error', (err) => {
 
 
 
-const startServer = (port) => {
+const startServer = async (port) => {
+  // Initialize PostgreSQL & pgvector schema
+  await db.init();
+
   server.listen(port, () => {
     console.log(`\n🚀 OpenRouter Backend & Terminal WebSocket Server listening on port ${port}`);
     console.log(`📌 Default Enforced Model: ${process.env.DEFAULT_MODEL || 'openai/gpt-4o-mini'}`);
     console.log(`🔑 OpenRouter API Key Configured: ${process.env.OPENROUTER_API_KEY ? 'Yes' : 'No'}`);
+    console.log(`🐘 PostgreSQL & pgvector: ${db.isConnected ? 'Connected ✅' : 'In-Memory Fallback ⚡'}`);
     console.log(`📡 WebSocket Terminal Stream ready at ws://localhost:${port}\n`);
   });
 
